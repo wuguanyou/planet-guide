@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>測試遊戲</title>
+
+  <style>
+    body {
+      max-width: 420px;
+      margin: 40px auto;
+      padding: 20px;
+      font-family: sans-serif;
+      background: #f4f5f8;
+      color: #222;
+    }
+
+    section {
+      margin: 20px 0;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+    }
+
+    input, button {
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    #message {
+      min-height: 24px;
+      color: #2455a4;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>測試遊戲</h1>
+
+  <section>
+    <h2>註冊</h2>
+    <form id="register-form">
+      <input name="username" placeholder="帳號（3 到 30 個字元）"
+             minlength="3" maxlength="30" required>
+      <input name="password" type="password" placeholder="密碼（至少 8 個字元）"
+             minlength="8" required>
+      <button type="submit">註冊</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>登入</h2>
+    <form id="login-form">
+      <input name="username" placeholder="帳號" required>
+      <input name="password" type="password" placeholder="密碼" required>
+      <button type="submit">登入</button>
+    </form>
+  </section>
+
+  <p id="message" aria-live="polite"></p>
+
+  <script>
+    // 把表單資料送到伺服器，再顯示伺服器回覆
+    async function sendForm(form, url) {
+      const message = document.querySelector("#message");
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: form.username.value,
+          password: form.password.value
+        })
+      });
+
+      const result = await response.json();
+      message.textContent = result.message;
+    }
+
+    document.querySelector("#register-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      await sendForm(event.target, "/api/register");
+    });
+
+    document.querySelector("#login-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      await sendForm(event.target, "/api/login");
+    });
+  </script>
+</body>
+</html>
